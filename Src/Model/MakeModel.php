@@ -4,36 +4,24 @@ namespace Src\Model;
 
 use Src\Error;
 
-require_once(DIR_DB_CONNECTION);
 
 class MakeModel {
-  public static function Retrieve ($col, $val) {//retorna um array associativo com base numa busca simples sql
-    $str = "select * from tb_fabricante where # = ?";
-    switch ($col) {//0: id, 1: nome
-      case 0:
-        $attr = "cd_usuario";
-        $type = "i";
-      break;
-      case 1:
-        $attr = "nm_usuario";
-        $type = "s";
-      break;
+  public static function Retrieve () {//retorna um array associativo com todas as marcas (esse é um caso especial)
+    require_once(DIR_DB_CONNECTION);
+    $str = "select cd_fabricante as ID, nm_fabricante as NOME from tb_fabricante";
+    $query = $DB->prepare($str);
+    try {//tenta executar o select
+      $query->execute();
+    } catch (mysqli_sql_exception $e) {
+      throw new SysException();
     }
-    if (isset($attr)) {//se attr existe, substitui o # pelo atributo e executa a query
-      $str = str_replace("#", $attr, $str);
-      $query = $DB->prepare($str);
-      $query->bind_param($type, $val);
-      try {//tenta executar o select
-        $query->execute();
-      } catch (mysqli_sql_exception $e) {
-        throw new SysException();
-      }
-      $res = ($query->get_result())->fetch_assoc();//armazena a primeira linha
-      $query->close();
-      return $res;
-    } else {//caso o parêmetro esteja errado, joga um erro
-      throw new InvalidActionException("Coluna inexistente");
+    $res = $query->get_result();
+    $content = [];
+    for ($i = 0; $i < $res->num_rows; $i++) {
+      $content[$i] = $res->fetch_assoc();
     }
+    $query->close();
+    return $content;
   }
 }
 

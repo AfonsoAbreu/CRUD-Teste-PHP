@@ -42,9 +42,11 @@ class Route {
     if (!isset($this->actions[$action])) {// joga uma exceção caso a ação não exista
       throw new NotFoundException();
     }
+    $request = new Request();
+    $response = new Response();
     foreach ($this->actions[$action] as $func) {
       try {//tenta executar a função
-        $continue = call_user_func($func, new Request(), new Response());//existe uma classe para request e outra para response, são responsáveis por lidar com as requisições/respostas http em JSON
+        $continue = call_user_func($func, $request, $response);//existe uma classe para request e outra para response, são responsáveis por lidar com as requisições/respostas http em JSON
       } catch (Exception $e) {//se ocorrer alguma exceção, traduz ela para uma SysException
         break;
         throw new SysException();

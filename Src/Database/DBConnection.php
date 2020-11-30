@@ -11,12 +11,13 @@ class DBConnection {
     $user = $_ENV['DB_USERNAME'];
     $password = $_ENV['DB_PASSWORD'];
     //sinceramente, eu usaria o PDO, mas isso significaria ter que rodar o banco em outro server (o USBWebserver não carrega o PDO)
-    \mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);//manda o mysql lançar exceptions caso necessário
     $this->connection = new \mysqli($host, $user, $password, $dbname, $port);//conecta com o banco
-    $this->connection->set_charset("utf8mb4");//configura o tipo de caracteres
+    \mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);//manda o mysql lançar exceptions caso necessário
     if ($this->connection->connect_errno) {//caso alguma merda ocorra, finaliza o script
       exit("Conexão mal-sucedida");
     }
+    $this->connection->set_charset("utf8mb4");//configura o tipo de caracteres
+    $this->connection->autocommit(false);//desativa o commit automático para todas as queries
   }
 
   public function getConnection () {//esse getter só existe pois não pode haver um setter, e isso não é C#

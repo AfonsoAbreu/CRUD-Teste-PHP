@@ -1,3 +1,5 @@
+drop database if exists teste;
+create database teste;
 use teste;
 
 create table tb_usuario (
@@ -17,15 +19,15 @@ create table tb_fabricante (
 
 create table tb_carro (
 	cd_carro int not null auto_increment,
-    cd_fabricante int not null,
+    cd_fabricante int,
     cd_usuario int not null,
     nm_modelo_carro varchar(100) not null,
     nm_cor_carro varchar(50) not null,
     aa_carro year not null,
     cd_placa_carro varchar(7) not null,
     constraint pk_carro primary key (cd_carro),
-    constraint fk_carro_fabricante foreign key (cd_fabricante) references tb_fabricante (cd_fabricante),
-    constraint fk_carro_usuario foreign key (cd_usuario) references tb_usuario (cd_usuario),
+    constraint fk_carro_fabricante foreign key (cd_fabricante) references tb_fabricante (cd_fabricante) on delete set null on update cascade,
+    constraint fk_carro_usuario foreign key (cd_usuario) references tb_usuario (cd_usuario) on delete cascade on update cascade,
     constraint uk_placa_carro unique key (cd_placa_carro)
 );
 

@@ -1,5 +1,5 @@
 <?php
-
+// meus parabéns se você conseguir fazer esse arquivo rodar como um comando pelo o composer, eu estou tentando fazer isso faz uma hora, e ainda não consegui
 require_once '../../../vendor/autoload.php';//load automático das classes
 $dotenv = Dotenv\Dotenv::createImmutable("../../../");// configura o Dotenv (sistema de variáveis globais)
 $dotenv->load();//carrega o Dotenv
@@ -20,9 +20,11 @@ try {
   $connection->begin_transaction();//tenta executar o dump por meio de uma transação (uma ação que pode ser revertida)
   $connection->multi_query($dump);
   $connection->commit();        
-} catch (Throwable $e) {//denovo, se der bosta ele para tudo (e volta ao estado anterior do banco)
+} catch (Throwable $e) {//denovo, se der erro ele para tudo (e volta ao estado anterior do banco)
   $connection->rollback();
   exit($e->getMessage());
 }
+
+exit(0);
 
 ?>

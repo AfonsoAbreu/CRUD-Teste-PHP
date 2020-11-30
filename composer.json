@@ -7,5 +7,10 @@
         "psr-4": {
             "Src\\": "Src/"
         }
+    },
+    "scripts": {
+        "load-db": [
+            "php -f 'C:\\USBWebserver v8.6.5\\root\\CRUD-Teste-PHP\\Src\\Database\\createDB.php'"
+        ]
     }
 }

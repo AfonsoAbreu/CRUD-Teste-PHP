@@ -6,7 +6,7 @@ use Src\Error;
 use Src\Error\Extensions;
 
 class UserModel {
-  private static $regexName = "/^[.\S]{8,}$/";
+  private static $regexName = "/^\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+$/u";
   private static $regexPassword = "/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,32}$/";
   
   public static function Create ($name, $email, $pass) {
@@ -15,28 +15,38 @@ class UserModel {
       preg_match(self::$regexName, $name) === 1 && 
       filter_var($email, FILTER_VALIDATE_EMAIL) && 
       preg_match(self::$regexPassword, $pass)
-      ) {//valida se os dados estão dentro dos conformes
+    ) {//valida se os dados estão dentro dos conformes
+      $err = !$DB->begin_transaction();//começa a transação, como essa função e a commit() podem retornar false, ambas estão dentro de um if (para lançar uma exceção posteriormente)
       $query = $DB->prepare("insert into tb_usuario (nm_usuario, cd_email_usuario, cd_senha_usuario) values ( ? , ? , ? )");
-      $pass = password_hash($pass, PASSWORD_BCRYPT);
-      $query->bind_param("sss", $name, $email, $pass);
-      try {//tenta inserir
-        $query->execute();
-        $query->close();
-      } catch (\mysqli_sql_exception $e) {//caso haja um erro, joga um erro de sistema
-        $realerror = new Error\DBException($e);
-        if ($realerror->code === 1062) {//código de erro mysql para falha numa restrição UNIQUE
-          throw new Extensions\EmailExistsException();
-        } else {
-          throw new Error\SysException("Erro no banco de dados");
+      $pass = password_hash($pass, PASSWORD_BCRYPT);//criptografa a senha
+      if ($query->bind_param("sss", $name, $email, $pass)) {//se os parâmetros estão corretos
+        try {//tenta inserir
+          $query->execute();
+          $query->close();
+        } catch (\mysqli_sql_exception $e) {//caso haja um erro, joga um erro de sistema
+          $DB->rollback();//retorna o banco ao estado anterior
+          $realerror = new Error\DBException($e);
+          if ($realerror->code === 1062) {//código de erro mysql para falha numa restrição UNIQUE
+            throw new Extensions\EmailExistsException();
+          } else {
+            throw new Error\SysException("Erro no banco de dados");
+          }
         }
+      } else {//senão, joga um erro
+        $DB->rollback();
+        throw new Error\InvalidActionException("Dados Inválidos");
       }
-    } else {//caso os dados não estejam no conforme, joga um erro 400
+      if ($err || !$DB->commit()) {
+        $DB->rollback();
+        throw new Error\SysException("Erro no banco de dados");
+      }
+    } else {//caso os dados não estejam no conforme, joga um erro
       throw new Error\InvalidActionException("Dados Inválidos");
     }
   }
 
   public static function Retrieve ($col, $val) {//retorna um array associativo com base numa busca simples sql
-    require_once(DIR_DB_CONNECTION);
+    require(DIR_DB_CONNECTION);
     $str = "select * from tb_usuario where # = ?";
     switch ($col) {//0: id, 1: nome, 2: email, 3: senha
       case 0:
@@ -59,15 +69,18 @@ class UserModel {
     if (isset($attr)) {//se attr existe, substitui o # pelo atributo e executa a query
       $str = str_replace("#", $attr, $str);
       $query = $DB->prepare($str);
-      $query->bind_param($type, $val);
-      try {//tenta executar o select
-        $query->execute();
-      } catch (\mysqli_sql_exception $e) {
-        throw new Error\SysException();
+      if ($query->bind_param($type, $val)) {//se os parametros são válidos
+        try {//tenta executar o select
+          $query->execute();
+        } catch (\mysqli_sql_exception $e) {
+          throw new Error\SysException();
+        }
+        $res = ($query->get_result())->fetch_all(MYSQLI_ASSOC);//armazena todas as linhas
+        $query->close();
+        return $res;
+      } else {//se eles não são, joga um erro
+        throw new Error\InvalidActionException("Dados Inválidos");
       }
-      $res = ($query->get_result())->fetch_all(MYSQLI_ASSOC);//armazena todas as linhas
-      $query->close();
-      return $res;
     } else {//caso o parêmetro esteja errado, joga um erro
       throw new Error\InvalidActionException("Coluna inexistente");
     }
@@ -95,34 +108,56 @@ class UserModel {
     }
     if (isset($attr)) {//se attr existe, substitui o # pelo atributo e executa a query
       $str = str_replace("#", $attr, $str);
+      $err = !$DB->begin_transaction();
       $query = $DB->prepare($str);
-      $query->bind_param("si", $val, $id);
-      try {
-        $query->execute();//executa a query
-      } catch (\mysqli_sql_exception $e) {
-        if ($e->code = 1062) {//se esse email já estiver cadastrado
-          throw new Error\EmailExistsException();
-        } else {
-          throw new Error\SysException("Erro no banco de dados");
+      if ($query->bind_param("si", $val, $id)) {//se os parâmetros forem válidos
+        try {
+          $query->execute();//executa a query
+        } catch (\mysqli_sql_exception $e) {
+          $DB->rollback();
+          $realerror = new Error\DBException($e);
+          if ($realerror->code === 1062) {//se esse email já estiver cadastrado
+            throw new Extensions\EmailExistsException();
+          } else {
+            throw new Error\SysException("Erro no banco de dados");
+          }
         }
-      }
-      if ($query->affected_rows !== 1) {//se a query não afetou uma linha, dá erro
-        throw new Error\InvalidActionException("Nenhuma linha foi atualizada");
+        if ($query->affected_rows !== 1) {//se a query não afetou uma linha, dá erro
+          $DB->rollback();
+          throw new Error\InvalidActionException("Nenhuma linha foi atualizada");
+        }
+      } else {
+        $DB->rollback();
+        throw new Error\InvalidActionException("Dados Inválidos");
       }
       $query->close();
+      if ($err || !$DB->commit()) {
+        $DB->rollback();
+        throw new Error\SysException("Erro no banco de dados");
+      }
     } else {//se attr não existe, significa que o parametro col foi preenchido de maneira errada
-      throw new Error\InvalidActionException ("Coluna inexistente");
+      throw new Error\InvalidActionException("Coluna inexistente");
     }
   }
   
   public static function Delete ($id) {
     require_once(DIR_DB_CONNECTION);
+    $err = !$DB->begin_transaction();
     $query = $DB->prepare("delete from tb_usuario where cd_usuario = ?");
-    $query->bind_param("i", $id);//prepara a query
-    try {
-      $query->execute();//deleta
-      $query->close();
-    } catch (\mysqli_sql_exception $e) {//caso dê erro, sai do processo
+    if ($query->bind_param("i", $id)) {//prepara a query, se ps parametros forem válidos
+      try {
+        $query->execute();//deleta
+      } catch (\mysqli_sql_exception $e) {//caso dê erro, sai do processo
+        $DB->rollback();
+        throw new Error\SysException("Erro no banco de dados");
+      }
+    } else {
+      $DB->rollback();
+      throw new Error\InvalidActionException("Dados Inválidos");
+    }
+    $query->close();
+    if ($err || !$DB->commit()) {
+      $DB->rollback();
       throw new Error\SysException("Erro no banco de dados");
     }
   }
