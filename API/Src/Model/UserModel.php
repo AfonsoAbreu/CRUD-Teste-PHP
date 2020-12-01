@@ -18,6 +18,7 @@ class UserModel {
     ) {//valida se os dados estão dentro dos conformes
       $err = !$DB->begin_transaction();//começa a transação, como essa função e a commit() podem retornar false, ambas estão dentro de um if (para lançar uma exceção posteriormente)
       $query = $DB->prepare("insert into tb_usuario (nm_usuario, cd_email_usuario, cd_senha_usuario) values ( ? , ? , ? )");
+      // var_dump($DB->query("show tables")->fetch_all(MYSQLI_ASSOC));
       $pass = password_hash($pass, PASSWORD_BCRYPT);//criptografa a senha
       if ($query->bind_param("sss", $name, $email, $pass)) {//se os parâmetros estão corretos
         try {//tenta inserir
