@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/eb83065a20.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Página Principal | Minha Aplicação</title>
+  </head>
+  <body>
+    <div class="root">
+      <nav>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/PHP-logo.svg" alt="logo" class="logo">
+        <div class="links">
+          <p>link1</p>
+          <p>link2</p>
+          <p>link3</p>
+          <p>link4</p>
+          <p>link5</p>
+        </div>
+      </nav>
+      <div class="center scrollable">
+        <main class="central-card list">
+          <table id="carList">
+            <thead>
+              <td>Fabricante</td>
+              <td>Modelo</td>
+              <td>Cor</td>
+              <td>Ano</td>
+              <td>Placa</td>
+              <td>Excluir</td>
+            </thead>
+            <tbody id="carListBody">
+
+            </tbody>
+          </table>
+          <div class="navigate">
+            <button id="prev" class="button"><</button>
+            <button id="insert" class="button"">Inserir</button>
+            <button id="next" class="button">></button>
+          </div>
+          <a class="button" id="sair">Sair</a>
+        </main>
+      </div>
+    </div>
+    <script type="module" src="js/bemvindo.js"></script>
+  </body>
+</html>

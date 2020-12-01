@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Login | Minha Aplicação</title>
+  </head>
+  <body>
+    <div class="root">
+      <form id="formLogin" class="center central-card" id="form">
+        <header>
+          <h1>Área Restrita</h1>
+        </header>
+        <main>
+          <div class="row">
+            <input type="text" name="user_email" id="email" required>
+            <p class="input-label">Insira seu Email</p>
+          </div>
+          <div class="row">
+            <input type="password" name="user_password" id="password" required>
+            <p class="input-label">Insira sua Senha</p>
+          </div>
+        </main>
+        <footer>
+          <input type="submit" value="Entrar" class="button">
+          <a href="cadastro.html">Não tem um cadastro? Clique Aqui.</a>
+        </footer>
+      </form>
+    </div>
+    <script type="module" src="js/login.js"></script>
+  </body>
+</html>

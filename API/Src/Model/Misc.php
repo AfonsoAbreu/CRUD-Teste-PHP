@@ -51,14 +51,14 @@ class Misc {
   public static function listCars ($userId, $page) {
     require_once(DIR_DB_CONNECTION);
     $query = $DB->prepare("
-      select cd_carro as ID, (
+      select cd_carro as id, (
         select nm_fabricante 
         from tb_fabricante 
         where tb_fabricante.cd_fabricante = tb_carro.cd_fabricante
-      ) as MARCA, nm_modelo_carro as MODELO, nm_cor_carro as COR, aa_carro as ANO, cd_placa_carro as PLACA
+      ) as makeName, nm_modelo_carro as model, nm_cor_carro as color, aa_carro as year, cd_placa_carro as numberPlate
       from tb_carro
       where cd_usuario = ?
-      order by MARCA
+      order by makeName
       limit 15
       offset ?
     ");
@@ -73,7 +73,7 @@ class Misc {
       $query->close();
       return $res;
     } else {
-      throw new Error\InvalidActionException("Invalid params");//TODO: deixar todas as queries desse jeito (e depois implementar transactions)
+      throw new Error\InvalidActionException("Dados inválidos");
     }
   }
 }

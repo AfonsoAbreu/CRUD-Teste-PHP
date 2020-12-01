@@ -8,6 +8,7 @@
     public function __construct () {
       header_remove();
       header("Content-Type: application/json");
+      header("Access-Control-Allow-Origin: *");
     }
 
     public function setBody ($rawBody) {

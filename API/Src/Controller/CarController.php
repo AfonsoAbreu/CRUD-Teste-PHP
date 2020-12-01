@@ -63,9 +63,9 @@ class CarController {
   }
 
   public static function listCars (Request $request, Response $response) {
-    $page = $request->params["page"];
+    $page = $request->body["page"];
     $userId = $request->body["token"];
-
+    
     try {
       $res = Misc::listCars($userId, $page);
     } catch (Error\SysException $e) {

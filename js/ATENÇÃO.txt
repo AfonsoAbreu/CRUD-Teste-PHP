@@ -1,0 +1,4 @@
+O que você está para ver nessa pasta é o resultado da minha impaciência. Os scripts estão horríveis ao nível de eXtreme Go Horse, mas ou eu fazia isso ou eu estourava o prazo de umas 6 atividades.
+É isso, boa sorte, você vai precisar.
+
+OBSERVAÇÃO!!!!!: Esses scripts só estão assim porque eu foquei todo o meu tempo na API, se você quer ver código mais bem-feito (não tanto, o dia só tem 24h e eu fiz ela do quase zero), dê uma checada lá.

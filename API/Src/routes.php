@@ -6,9 +6,11 @@ use Src\Lib\Router\Route;
 $routes = [];
 //TODO: inserir todos os controllers aqui
 $user = new Route("/user");
-$user->addCallback("POST", ["Src\Controller\UserController", "createUser"]);//AÇÃO
 $user->addMiddleware("DELETE", ["Src\Controller\UserController", "auth"]);//AUTORIZAÇÃO
+$user->addMiddleware("GET", ["Src\Controller\UserController", "auth"]);//AUTORIZAÇÃO
+$user->addCallback("POST", ["Src\Controller\UserController", "createUser"]);//AÇÃO
 $user->addCallback("DELETE", ["Src\Controller\UserController", "deleteUser"]);//AÇÃO
+$user->addCallback("GET", ["Src\Controller\UserController", "getOwnInfo"]);//AÇÃO
 array_push($routes, $user);
 
 $auth = new Route("/auth");
@@ -17,12 +19,15 @@ array_push($routes, $auth);
 
 $car = new Route("/car");
 $car->addMiddleware("POST", ["Src\Controller\UserController", "auth"]);//AUTORIZAÇÕES
-$car->addMiddleware("GET", ["Src\Controller\UserController", "auth"]);
 $car->addMiddleware("DELETE", ["Src\Controller\UserController", "auth"]);
 $car->addCallback("POST", ["Src\Controller\CarController", "addCar"]);//AÇÕES
-$car->addCallback("GET", ["Src\Controller\CarController", "listCars"]);
 $car->addCallback("DELETE", ["Src\Controller\CarController", "removeCar"]);
 array_push($routes, $car);
+
+$carList = new Route("/car-list");
+$carList->addMiddleware("POST", ["Src\Controller\UserController", "auth"]);
+$carList->addCallback("POST", ["Src\Controller\CarController", "listCars"]);
+array_push($routes, $carList);
 
 $make = new Route("/make");
 $make->addCallback("GET", ["Src\Controller\MakeController", "getMakes"]);//AÇÃO

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Cadastro | Minha Aplicação</title>
+  </head>
+  <body>
+    <div class="root">
+      <form id="formCadastro" class="center central-card">
+        <header>
+          <h1>Cadastro</h1>
+          <p>Venha fazer parte da nossa equipe.</p>
+        </header>
+        <main>
+          <div class="row">
+            <input type="text" name="user_name" id="name" required>
+            <p class="input-label">Insira seu Nome</p>
+          </div>
+          <div class="row">
+            <input type="text" name="user_email" id="email" required>
+            <p class="input-label">Insira seu Email</p>
+          </div>
+          <div class="row">
+            <input type="password" name="user_password" id="password" required>
+            <p class="input-label">Insira sua Senha</p>
+          </div>
+        </main>
+        <footer>
+          <input type="submit" value="Cadastre-se" class="button">
+          <a href="index.html">Ir para o Login.</a>
+        </footer>
+      </form>
+    </div>
+    <script type="module" src="js/cadastro.js"></script>
+  </body>
+</html>

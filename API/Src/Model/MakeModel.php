@@ -8,7 +8,7 @@ use Src\Error;
 class MakeModel {
   public static function Retrieve () {//retorna um array associativo com todas as marcas (esse é um caso especial)
     require_once(DIR_DB_CONNECTION);
-    $str = "select cd_fabricante as ID, nm_fabricante as NOME from tb_fabricante";
+    $str = "select cd_fabricante as id, nm_fabricante as name from tb_fabricante";
     $query = $DB->prepare($str);
     try {//tenta executar o select
       $query->execute();

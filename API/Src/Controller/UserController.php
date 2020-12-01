@@ -93,6 +93,18 @@ class UserController {
       $response->abortWithError(500, "An unexpected error occurred");
     }
   }
+
+  public static function getOwnInfo (Request $request, Response $response) {
+    $userId = $request->body["token"];
+    try {
+      $result = UserModel::Retrieve(0, $userId)[0];
+    } catch (Error\SysException $e) {
+      $response->abortWithError(500, "An unexpected error ocurred");
+    }
+    $result = ["name" => $result["nm_usuario"], "email" => $result["cd_email_usuario"]];
+    $response->setBody($result);
+    $response->send();
+  }
 }
 
 ?>
