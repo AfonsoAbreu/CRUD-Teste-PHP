@@ -1,5 +1,5 @@
 # CRUD-Teste-PHP
-Um projeto simples em php/html/css/js que faz uso de uma API RESTful construída (quase) do zero em PHP, que se comunica com o front-end por meio de JSON.
+Um projeto simples em php/html/css/js que faz uso de uma API RESTful construída (quase) do zero em PHP, que se comunica com o front-end por meio de JSON, utilizando JSONWebToken como autenticação.
 
 <h5>Observações:</h5>
 <ul>
