@@ -1,4 +1,10 @@
 {
+    "name": "afonsoabreu/crud-teste-php-api",
+    "authors": [
+        {
+            "name": "Afonso Abreu"
+        }
+    ],
     "require": {
         "vlucas/phpdotenv": "5.2.0",
         "firebase/php-jwt": "^5.2"
@@ -7,10 +13,5 @@
         "psr-4": {
             "Src\\": "Src/"
         }
-    },
-    "scripts": {
-        "load-db": [
-            "php -f 'C:\\USBWebserver v8.6.5\\root\\CRUD-Teste-PHP\\Src\\Database\\createDB.php'"
-        ]
     }
 }
